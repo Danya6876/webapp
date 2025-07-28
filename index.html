@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Открыть кейс</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f2;
+      color: #222;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+    img {
+      max-width: 80%;
+      margin: 20px auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .open-button {
+      background: #2ecc71;
+      color: white;
+      padding: 15px 30px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .open-button:hover {
+      background: #27ae60;
+    }
+    .result {
+      font-size: 22px;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+    .spinner {
+      margin: 20px auto;
+      font-size: 28px;
+      color: #999;
+      animation: spin 2s infinite linear;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>@SeeklyGPT_bot</h1>
+  <img src="suitcase-full-money-finance-business-illustration_509719-254.png" alt="Кейс" />
+  <button class="open-button" onclick="openCase()">ОТКРЫТЬ КЕЙС</button>
+  <div id="result" class="result"></div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    let openedToday = localStorage.getItem("caseOpenedDate") === new Date().toISOString().slice(0, 10);
+
+    function openCase() {
+      if (openedToday) {
+        document.getElementById("result").innerHTML = "<div>Ты уже открывал кейс сегодня</div>";
+        return;
+      }
+
+      openedToday = true;
+      localStorage.setItem("caseOpenedDate", new Date().toISOString().slice(0, 10));
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = '<div class="spinner">🎰</div>';
+
+      setTimeout(() => {
+        const rand = Math.random();
+        let result = "НИЧЕГО 😢";
+        if (rand < 0.01) result = "🎉 500 ₽!";
+
+        resultDiv.innerHTML = `<div>Тебе выпало: <br><span style='color:#27ae60'>${result}</span></div>`;
+
+        fetch("https://yourserver.com/case-result", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: tg.initDataUnsafe.user.id,
+            result: result
+          })
+        });
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
