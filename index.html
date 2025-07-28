@@ -131,7 +131,7 @@
 
         resultDiv.innerHTML = `<div>Тебе выпало: <br><span style='color:#27ae60'>${result}</span></div>`;
 
-        fetch("https://yourserver.com/case-result", {
+        fetch("http://89.110.89.7:8000/case-result", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
